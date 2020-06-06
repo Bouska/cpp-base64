@@ -187,27 +187,30 @@ static std::string decode(String encoded_string, bool remove_linebreaks) {
  // enough space in the string to be returned.
  //
     size_t approx_length_of_decoded_string = in_len / 4 * 3;
+    const size_t len = in_len - 4;
     std::string ret;
     ret.reserve(approx_length_of_decoded_string);
 
-    while (pos < in_len) {
-
-       unsigned int pos_of_char_1 = pos_of_char(encoded_string[pos+1] );
-
-       ret.push_back(static_cast<std::string::value_type>( ( (pos_of_char(encoded_string[pos+0]) ) << 2 ) + ( (pos_of_char_1 & 0x30 ) >> 4)));
-
-       if (encoded_string[pos+2] != '=' && encoded_string[pos+2] != '.') { // accept URL-safe base 64 strings, too, so check for '.' also.
-
-          unsigned int pos_of_char_2 = pos_of_char(encoded_string[pos+2] );
-          ret.push_back(static_cast<std::string::value_type>( (( pos_of_char_1 & 0x0f) << 4) + (( pos_of_char_2 & 0x3c) >> 2)));
-
-          if (encoded_string[pos+3] != '=' && encoded_string[pos+3] != '.') {
-             ret.push_back(static_cast<std::string::value_type>( ( (pos_of_char_2 & 0x03 ) << 6 ) + pos_of_char(encoded_string[pos+3])   ));
-          }
-       }
-
+    while (pos < len) {
+       const unsigned int pos_of_char_1 = pos_of_char(encoded_string[pos + 1]);
+       const unsigned int pos_of_char_2 = pos_of_char(encoded_string[pos + 2]);
+       ret.push_back(static_cast<std::string::value_type>(((pos_of_char(encoded_string[pos + 0])) << 2) + ((pos_of_char_1 & 0x30) >> 4)));
+       ret.push_back(static_cast<std::string::value_type>(((pos_of_char_1 & 0x0f)                 << 4) + ((pos_of_char_2 & 0x3c) >> 2)));
+       ret.push_back(static_cast<std::string::value_type>(((pos_of_char_2 & 0x03)                 << 6) +   pos_of_char(encoded_string[pos + 3])));
        pos += 4;
     }
+
+   const unsigned int pos_of_char_1 = pos_of_char(encoded_string[pos + 1]);
+   ret.push_back(static_cast<std::string::value_type>(((pos_of_char(encoded_string[pos + 0])) << 2) + ((pos_of_char_1 & 0x30) >> 4)));
+
+   if (encoded_string[pos + 2] != '=' && encoded_string[pos + 2] != '.') { // accept URL-safe base 64 strings, too, so check for '.' also.
+      const unsigned int pos_of_char_2 = pos_of_char(encoded_string[pos + 2]);
+      ret.push_back(static_cast<std::string::value_type>(((pos_of_char_1 & 0x0f) << 4) + ((pos_of_char_2 & 0x3c) >> 2)));
+
+      if (encoded_string[pos + 3] != '=' && encoded_string[pos + 3] != '.') {
+         ret.push_back(static_cast<std::string::value_type>(((pos_of_char_2 & 0x03) << 6) + pos_of_char(encoded_string[pos + 3])));
+      }
+   }
 
     return ret;
 }
