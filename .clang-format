@@ -1,0 +1,13 @@
+---
+BasedOnStyle: WebKit
+AlignConsecutiveAssignments: true
+AllowShortIfStatementsOnASingleLine: true
+BreakBeforeBinaryOperators: None
+BreakBeforeBraces: Attach
+ContinuationIndentWidth: 2
+Cpp11BracedListStyle: true
+IndentCaseLabels: true
+MaxEmptyLinesToKeep: 2
+SortIncludes: false
+SpacesBeforeTrailingComments: 2
+...
