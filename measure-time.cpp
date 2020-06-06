@@ -141,16 +141,15 @@ int main() {
       "tristique enim. Donec iaculis sollicitudin scelerisque. Morbi lorem purus,\n"
       "consectetur et cursus ac, interdum sit amet nulla. In ullamcorper placerat\n"
       "velit nec aliquet. Nunc non tincidunt nibh, eget rhoncus justo. Sed sit amet\n"
-      "libero neque.\n"
-    ;
+      "libero neque.\n";
 
     auto time_encoding_begin = std::chrono::system_clock::now();
-    std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(lorem_ipsum.c_str()), lorem_ipsum.length());
-    auto time_encoding_end = std::chrono::system_clock::now();
+    std::string encoded      = base64_encode(reinterpret_cast<const unsigned char*>(lorem_ipsum.c_str()), lorem_ipsum.length());
+    auto time_encoding_end   = std::chrono::system_clock::now();
 
     auto time_decoding_begin = std::chrono::system_clock::now();
-    std::string decoded = base64_decode(encoded);
-    auto time_decoding_end = std::chrono::system_clock::now();
+    std::string decoded      = base64_decode(encoded);
+    auto time_decoding_end   = std::chrono::system_clock::now();
 
     std::chrono::duration<double> duration_encoding = time_encoding_end - time_encoding_begin;
     std::chrono::duration<double> duration_decoding = time_decoding_end - time_decoding_begin;
@@ -159,8 +158,8 @@ int main() {
     std::cout << "Decoding took: " << duration_decoding.count() << std::endl;
 
     if (decoded != lorem_ipsum) {
-      std::cout << "Strings differ!" << std::endl;
-      return 1;
+        std::cout << "Strings differ!" << std::endl;
+        return 1;
     }
     return 0;
 }
