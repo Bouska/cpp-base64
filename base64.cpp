@@ -53,22 +53,24 @@ static const char* to_base64_chars[2] = {
   "-_"};
 
 static const unsigned char from_base64_chars[256] = {
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 62, 64, 63,
-    52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 64, 64, 64, 64, 64, 64,
-    64,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
-    15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 64, 64, 64, 64, 63,
-    64, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
-    64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64
+  // clang-format off
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 62, 64, 62, 64, 63,
+  52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 64, 64, 64, 64, 64, 64,
+  64,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+  15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 64, 64, 64, 64, 63,
+  64, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+  41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64,
+  // clang-format on
 };
 
 static unsigned int pos_of_char(const unsigned char chr) {
@@ -140,30 +142,30 @@ std::string base64_encode(unsigned char const* bytes_to_encode, size_t in_len, b
     ret.reserve(len_encoded);
 
     unsigned int pos = 0;
+    unsigned int chunk;
 
     while (pos < len) {
-        // clang-format off
-        ret.push_back(base64_chars_[ (bytes_to_encode[pos + 0] & 0xfc) >> 2]);
-        ret.push_back(base64_chars_[((bytes_to_encode[pos + 0] & 0x03) << 4) + ((bytes_to_encode[pos + 1] & 0xf0) >> 4)]);
-        ret.push_back(base64_chars_[((bytes_to_encode[pos + 1] & 0x0f) << 2) + ((bytes_to_encode[pos + 2] & 0xc0) >> 6)]);
-        ret.push_back(base64_chars_[  bytes_to_encode[pos + 2] & 0x3f]);
-        // clang-format on
+        chunk = unsigned(bytes_to_encode[pos + 0]) << 16 | unsigned(bytes_to_encode[pos + 1]) << 8 | unsigned(bytes_to_encode[pos + 2]);
+        ret.push_back(base64_chars_[chunk >> 18]);
+        ret.push_back(base64_chars_[chunk >> 12 & 0x3f]);
+        ret.push_back(base64_chars_[chunk >> 6 & 0x3f]);
+        ret.push_back(base64_chars_[chunk & 0x3f]);
 
         pos += 3;
     }
 
     switch (pad) {
         case 2:
-            // clang-format off
-            ret.push_back(base64_chars_[ (bytes_to_encode[pos + 0] & 0xfc) >> 2]);
-            ret.push_back(base64_chars_[((bytes_to_encode[pos + 0] & 0x03) << 4) + ((bytes_to_encode[pos + 1] & 0xf0) >> 4)]);
-            ret.push_back(base64_chars_[ (bytes_to_encode[pos + 1] & 0x0f) << 2]);
-            // clang-format on
+            chunk = int(bytes_to_encode[pos + 0]) << 8 | int(bytes_to_encode[pos + 1]);
+            ret.push_back(base64_chars_[chunk >> 10]);
+            ret.push_back(base64_chars_[chunk >> 4 & 0x3f]);
+            ret.push_back(base64_chars_[chunk << 2 & 0x3f]);
             ret.push_back(trailing_char);
             break;
         case 1:
-            ret.push_back(base64_chars_[(bytes_to_encode[pos + 0] & 0xfc) >> 2]);
-            ret.push_back(base64_chars_[(bytes_to_encode[pos + 0] & 0x03) << 4]);
+            chunk = int(bytes_to_encode[pos + 0]);
+            ret.push_back(base64_chars_[chunk >> 2]);
+            ret.push_back(base64_chars_[chunk << 4 & 0x3f]);
             ret.push_back(trailing_char);
             ret.push_back(trailing_char);
             break;
@@ -207,26 +209,25 @@ static std::string decode(String encoded_string, bool remove_linebreaks) {
     ret.reserve(approx_length_of_decoded_string);
 
     while (pos < len) {
-        // clang-format off
-        const unsigned int pos_of_char_1 = pos_of_char(encoded_string[pos + 1]);
-        const unsigned int pos_of_char_2 = pos_of_char(encoded_string[pos + 2]);
-        ret.push_back(static_cast<std::string::value_type>(((pos_of_char(encoded_string[pos + 0])) << 2) + ((pos_of_char_1 & 0x30) >> 4)));
-        ret.push_back(static_cast<std::string::value_type>(((pos_of_char_1 & 0x0f)                 << 4) + ((pos_of_char_2 & 0x3c) >> 2)));
-        ret.push_back(static_cast<std::string::value_type>(((pos_of_char_2 & 0x03)                 << 6) +   pos_of_char(encoded_string[pos + 3])));
-        // clang-format on
+        const unsigned int chunk = pos_of_char(encoded_string[pos + 0]) << 18 | pos_of_char(encoded_string[pos + 1]) << 12 | pos_of_char(encoded_string[pos + 2]) << 6 | pos_of_char(encoded_string[pos + 3]);
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 16 & 0xff));
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 8 & 0xff));
+        ret.push_back(static_cast<std::string::value_type>(chunk & 0xff));
         pos += 4;
     }
 
-    const unsigned int pos_of_char_1 = pos_of_char(encoded_string[pos + 1]);
-    ret.push_back(static_cast<std::string::value_type>(((pos_of_char(encoded_string[pos + 0])) << 2) + ((pos_of_char_1 & 0x30) >> 4)));
-
-    if (encoded_string[pos + 2] != '=' && encoded_string[pos + 2] != '.') {  // accept URL-safe base 64 strings, too, so check for '.' also.
-        const unsigned int pos_of_char_2 = pos_of_char(encoded_string[pos + 2]);
-        ret.push_back(static_cast<std::string::value_type>(((pos_of_char_1 & 0x0f) << 4) + ((pos_of_char_2 & 0x3c) >> 2)));
-
-        if (encoded_string[pos + 3] != '=' && encoded_string[pos + 3] != '.') {
-            ret.push_back(static_cast<std::string::value_type>(((pos_of_char_2 & 0x03) << 6) + pos_of_char(encoded_string[pos + 3])));
-        }
+    if (encoded_string[pos + 2] == '=' || encoded_string[pos + 2] == '.') {  // accept URL-safe base 64 strings, too, so check for '.' also.
+        const unsigned int chunk = pos_of_char(encoded_string[pos + 0]) << 6 | pos_of_char(encoded_string[pos + 1]);
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 4 & 0xff));
+    } else if (encoded_string[pos + 3] == '=' || encoded_string[pos + 3] == '.') {
+        const unsigned int chunk = pos_of_char(encoded_string[pos + 0]) << 12 | pos_of_char(encoded_string[pos + 1]) << 6 | pos_of_char(encoded_string[pos + 2]);
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 10 & 0xff));
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 2 & 0xff));
+    } else {
+        const unsigned int chunk = pos_of_char(encoded_string[pos + 0]) << 18 | pos_of_char(encoded_string[pos + 1]) << 12 | pos_of_char(encoded_string[pos + 2]) << 6 | pos_of_char(encoded_string[pos + 3]);
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 16 & 0xff));
+        ret.push_back(static_cast<std::string::value_type>(chunk >> 8 & 0xff));
+        ret.push_back(static_cast<std::string::value_type>(chunk & 0xff));
     }
 
     return ret;
